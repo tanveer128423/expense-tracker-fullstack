@@ -1,0 +1,33 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+.container {
+  max-width: 400px;
+  background: #fff;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+form input,
+form button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+li {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}

@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Expense Tracker</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Expense Tracker</h1>
-  <p>Frontend setup done ✅</p>
+
+  <div class="container">
+    <h1>Expense Tracker</h1>
+
+    <form id="expense-form">
+      <input type="text" id="title" placeholder="Expense title" required />
+      <input type="number" id="amount" placeholder="Amount" required />
+      <input type="text" id="category" placeholder="Category" required />
+      <button type="submit">Add Expense</button>
+    </form>
+
+    <h2>Total: ₹<span id="total">0</span></h2>
+
+    <ul id="expense-list"></ul>
+  </div>
 
   <script src="script.js"></script>
 </body>
