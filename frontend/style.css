@@ -31,3 +31,18 @@ li {
   justify-content: space-between;
   margin: 10px 0;
 }
+
+
+#message {
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+li button {
+  background: red;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+}

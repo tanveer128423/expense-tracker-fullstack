@@ -5,11 +5,18 @@ const Expense = require("../models/Expense");
 // POST: Add expense
 router.post("/", async (req, res) => {
   try {
-    const expense = new Expense(req.body);
+    const { title, amount, category } = req.body;
+
+    if (!title || !amount || !category) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const expense = new Expense({ title, amount, category });
     const savedExpense = await expense.save();
+
     res.status(201).json(savedExpense);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

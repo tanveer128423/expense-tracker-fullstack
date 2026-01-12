@@ -3,15 +3,18 @@ const mongoose = require("mongoose");
 const expenseSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: [true, "Title is required"],
+    trim: true,
   },
   amount: {
     type: Number,
-    required: true,
+    required: [true, "Amount is required"],
+    min: [1, "Amount must be greater than 0"],
   },
   category: {
     type: String,
-    required: true,
+    required: [true, "Category is required"],
+    trim: true,
   },
   date: {
     type: Date,
