@@ -5,9 +5,12 @@ const form = document.getElementById("expense-form");
 const titleInput = document.getElementById("title");
 const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
+const dateInput = document.getElementById("date");
 const expenseList = document.getElementById("expense-list");
 const totalEl = document.getElementById("total");
-
+const filterCategory = document.getElementById("filter-category");
+const filterMonth = document.getElementById("filter-month");
+const chartCtx = document.getElementById("expense-chart").getContext("2d");
 
 function showMessage(text, color = "green") {
   messageEl.innerText = text;
@@ -17,40 +20,101 @@ function showMessage(text, color = "green") {
   }, 2000);
 }
 
-
 async function fetchExpenses() {
-  const res = await fetch(API_URL);
-  const expenses = await res.json();
+  try {
+    const res = await fetch(API_URL);
+    let expenses = await res.json();
 
-  expenseList.innerHTML = "";
-  let total = 0;
+    const categories = ["All", ...new Set(expenses.map((e) => e.category))];
+    filterCategory.innerHTML = categories
+      .map((cat) => `<option value="${cat}">${cat}</option>`)
+      .join("");
 
-  expenses.forEach((expense) => {
-    total += expense.amount;
+    if (filterCategory.value !== "All") {
+      expenses = expenses.filter((e) => e.category === filterCategory.value);
+    }
 
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${expense.title} - ₹${expense.amount}
-      <button onclick="deleteExpense('${expense._id}')">X</button>
-    `;
-    expenseList.appendChild(li);
-  });
+    if (filterMonth && filterMonth.value) {
+      expenses = expenses.filter((e) => e.date.startsWith(filterMonth.value));
+    }
 
-  totalEl.innerText = total;
+    expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    expenseList.innerHTML = "";
+    let total = 0;
+
+    expenses.forEach((expense) => {
+      total += expense.amount;
+      const li = document.createElement("li");
+      li.innerHTML = `
+        ${expense.title} - ₹${expense.amount} (${expense.category})
+        <button onclick="deleteExpense('${expense._id}')">X</button>
+      `;
+      expenseList.appendChild(li);
+    });
+
+    totalEl.innerText = total;
+
+    const categoryTotals = expenses.reduce((acc, exp) => {
+      acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
+      return acc;
+    }, {});
+
+    if (window.expenseChart) window.expenseChart.destroy();
+    window.expenseChart = new Chart(chartCtx, {
+      type: "pie",
+      data: {
+        labels: Object.keys(categoryTotals),
+        datasets: [{
+          label: "Expenses by Category",
+          data: Object.values(categoryTotals),
+          backgroundColor: [
+            "#007bff",
+            "#28a745",
+            "#ffc107",
+            "#dc3545",
+            "#6f42c1",
+            "#fd7e14"
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom" }
+        }
+      }
+    });
+
+  } catch (error) {
+    showMessage("Failed to load expenses", "red");
+  }
 }
 
-fetchExpenses();
+async function deleteExpense(id) {
+  try {
+    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    showMessage("Expense deleted", "red");
+    fetchExpenses();
+  } catch (error) {
+    showMessage("Failed to delete expense", "red");
+  }
+}
 
+filterCategory.addEventListener("change", fetchExpenses);
+if (filterMonth) filterMonth.addEventListener("change", fetchExpenses);
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const submitBtn = form.querySelector("button");
 
   if (
     titleInput.value.trim() === "" ||
     amountInput.value <= 0 ||
-    categoryInput.value.trim() === ""
+    categoryInput.value.trim() === "" ||
+    dateInput.value === ""
   ) {
-    alert("Please enter valid expense details");
+    showMessage("Please enter valid expense details", "red");
     return;
   }
 
@@ -58,9 +122,11 @@ form.addEventListener("submit", async (e) => {
     title: titleInput.value.trim(),
     amount: Number(amountInput.value),
     category: categoryInput.value.trim(),
+    date: dateInput.value
   };
 
   try {
+    submitBtn.disabled = true;
     await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -71,21 +137,10 @@ form.addEventListener("submit", async (e) => {
     showMessage("Expense added successfully");
     fetchExpenses();
   } catch (error) {
-    alert("Error adding expense");
+    showMessage("Error adding expense", "red");
+  } finally {
+    submitBtn.disabled = false;
   }
 });
 
-
-async function deleteExpense(id) {
-  try {
-    await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
-    });
-
-    showMessage("Expense deleted", "red");
-    fetchExpenses();
-  } catch (error) {
-    showMessage("Failed to delete expense", "red");
-  }
-}
-
+fetchExpenses();
