@@ -1,16 +1,27 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
 
-// Middlewares
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Routes
+const expenseRoutes = require("./routes/expenseRoutes");
+app.use("/expenses", expenseRoutes);
+
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error(err));
+
 // Test route
 app.get("/", (req, res) => {
-  res.send("Expense Tracker Backend is running 🚀");
+  res.send("Expense Tracker Backend Running 🚀");
 });
 
 const PORT = 5000;
