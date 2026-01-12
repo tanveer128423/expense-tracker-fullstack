@@ -1,42 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expense Tracker</title>
-  <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Expense Tracker</h1>
 
-  <div class="container">
-    <h1>Expense Tracker</h1>
+      <div id="message"></div>
 
-    <div id="message"></div>
+      <div class="dashboard">
+        <div class="form-section">
+          <form id="expense-form">
+            <input
+              type="text"
+              id="title"
+              placeholder="Expense Title"
+              required
+            />
+            <input type="number" id="amount" placeholder="Amount" required />
+            <input type="text" id="category" placeholder="Category" required />
+            <input type="date" id="date" required />
+            <button type="submit">Add Expense</button>
+          </form>
 
-    <form id="expense-form">
-      <input type="text" id="title" placeholder="Expense Title" required />
-      <input type="number" id="amount" placeholder="Amount" required />
-      <input type="text" id="category" placeholder="Category" required />
-      <input type="date" id="date" required />
-      <button type="submit">Add Expense</button>
-    </form>
+          <select id="filter-category">
+            <option value="All">All Categories</option>
+          </select>
 
-    <select id="filter-category">
-      <option value="All">All Categories</option>
-    </select>
+          <input type="month" id="filter-month" />
 
-    <input type="month" id="filter-month" />
+          <ul id="expense-list"></ul>
+        </div>
 
-    <ul id="expense-list"></ul>
+        <div class="chart-section">
+          <h2>Total: ₹<span id="total">0</span></h2>
+          <canvas id="expense-chart" width="400" height="400"></canvas>
+        </div>
+      </div>
+    </div>
 
-    <h2>Total: ₹<span id="total">0</span></h2>
-
-    <canvas id="expense-chart" width="400" height="200"></canvas>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
