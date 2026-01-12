@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:5000/expenses";
+const API_URL = "https://expense-tracker-swz3.onrender.com/expenses";
+
 
 const messageEl = document.getElementById("message");
 const form = document.getElementById("expense-form");
@@ -13,7 +14,7 @@ const filterMonth = document.getElementById("filter-month");
 const chartCtx = document.getElementById("expense-chart").getContext("2d");
 
 function showMessage(text, color = "green") {
-  messageEl.innerText = text;
+  messageEl.innerText = text; 
   messageEl.style.color = color;
   setTimeout(() => {
     messageEl.innerText = "";
